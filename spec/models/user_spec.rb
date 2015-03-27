@@ -1,4 +1,6 @@
-describe CgtraderLevels::User do
+require 'spec_helper'
+
+RSpec.describe CgtraderLevels::User do
   describe 'new user' do
     it 'has 0 reputation points' do
       @user = CgtraderLevels::User.new
