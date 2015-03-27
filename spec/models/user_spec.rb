@@ -3,13 +3,13 @@ require 'spec_helper'
 RSpec.describe CgtraderLevels::User do
   describe 'new user' do
     it 'has 0 reputation points' do
-      @user = CgtraderLevels::User.new
+      @user = CgtraderLevels::User.create!
       expect(@user.reputation).to eq(0)
     end
 
     it "has assigned 'First level'" do
       @level = CgtraderLevels::Level.create!(experience: 0, title: 'First level')
-      @user = CgtraderLevels::User.new
+      @user = CgtraderLevels::User.create!
 
       expect(@user.level).to eq(@level)
     end
@@ -40,8 +40,6 @@ RSpec.describe CgtraderLevels::User do
 
   describe 'level up bonuses & privileges' do
     it 'gives 7 coins to user' do
-      pending
-
       @user = CgtraderLevels::User.create!(coins: 1)
 
       expect {

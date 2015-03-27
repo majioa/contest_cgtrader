@@ -1,8 +1,13 @@
 class CgtraderLevels::User < ActiveRecord::Base
   belongs_to :level, class_name: 'CgtraderLevels::Level'
 
-  after_initialize :set_new_level
-  after_update :set_new_level
+  before_save :set_new_level, :give_coins
+
+  RATE = 1.4
+
+  def coins
+    read_attribute(:coins).to_i
+  end
 
   private
 
@@ -14,4 +19,12 @@ class CgtraderLevels::User < ActiveRecord::Base
 
     self.level = matching_level if matching_level
   end
+
+  def give_coins
+    if self.changes[:reputation]
+      reputation_diff = self.changes[:reputation][1] - self.changes[:reputation][0]
+      self.coins += (reputation_diff.to_f / RATE).round
+    end
+  end
+
 end
