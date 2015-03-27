@@ -22,9 +22,7 @@ class CgtraderLevels::User < ActiveRecord::Base
                          .order(levels[:experience].desc).first
 
     if matching_level
-      if self.level
-        self.tax -= [ matching_level.number - self.level.number, self.tax ].min
-      end
+      add_bonus_to(matching_level) if self.level
       self.level = matching_level
     end
   end
@@ -34,6 +32,10 @@ class CgtraderLevels::User < ActiveRecord::Base
       reputation_diff = self.changes[:reputation][1] - self.changes[:reputation][0]
       self.coins += (reputation_diff.to_f / RATE).round
     end
+  end
+
+  def add_bonus_to level
+    self.tax -= [ level.number - self.level.number, self.tax ].min
   end
 
 end
