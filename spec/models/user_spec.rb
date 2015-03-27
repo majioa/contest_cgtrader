@@ -26,7 +26,7 @@ RSpec.describe CgtraderLevels::User do
       }.to change { @user.reload.level }.from(@level_1).to(@level_2)
     end
 
-    it "level ups from 'First level' to 'Second level'" do
+    it "level ups from 'First level' to 'Second level' with noise" do
       @level_1 = CgtraderLevels::Level.create!(experience: 0, title: 'First level')
       @level_2 = CgtraderLevels::Level.create!(experience: 10, title: 'Second level')
       @level_3 = CgtraderLevels::Level.create!(experience: 13, title: 'Third level')

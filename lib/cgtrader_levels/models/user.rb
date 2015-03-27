@@ -7,7 +7,10 @@ class CgtraderLevels::User < ActiveRecord::Base
   private
 
   def set_new_level
-    matching_level = CgtraderLevels::Level.where(experience: reputation).first
+    levels = CgtraderLevels::Level.arel_table
+    matching_level =
+    CgtraderLevels::Level.where(levels[:experience].lteq(reputation))
+                         .order(levels[:experience].desc).first
 
     if matching_level
       self.level_id = matching_level.id
