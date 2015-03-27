@@ -9,6 +9,10 @@ class CgtraderLevels::User < ActiveRecord::Base
     read_attribute(:coins).to_i
   end
 
+  def tax
+    read_attribute(:tax).to_i
+  end
+
   private
 
   def set_new_level
@@ -17,7 +21,12 @@ class CgtraderLevels::User < ActiveRecord::Base
     CgtraderLevels::Level.where(levels[:experience].lteq(reputation))
                          .order(levels[:experience].desc).first
 
-    self.level = matching_level if matching_level
+    if matching_level
+      if self.level
+        self.tax -= [ matching_level.number - self.level.number, self.tax ].min
+      end
+      self.level = matching_level
+    end
   end
 
   def give_coins

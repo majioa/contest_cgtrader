@@ -8,7 +8,7 @@ RSpec.describe CgtraderLevels::User do
     end
 
     it "has assigned 'First level'" do
-      @level = CgtraderLevels::Level.create!(experience: 0, title: 'First level')
+      @level = CgtraderLevels::Level.create!(experience: 0, title: 'First level', number: 0)
       @user = CgtraderLevels::User.create!
 
       expect(@user.level).to eq(@level)
@@ -17,8 +17,8 @@ RSpec.describe CgtraderLevels::User do
 
   describe 'level up' do
     it "level ups from 'First level' to 'Second level'" do
-      @level_1 = CgtraderLevels::Level.create!(experience: 0, title: 'First level')
-      @level_2 = CgtraderLevels::Level.create!(experience: 10, title: 'Second level')
+      @level_1 = CgtraderLevels::Level.create!(experience: 0, title: 'First level', number: 0)
+      @level_2 = CgtraderLevels::Level.create!(experience: 10, title: 'Second level', number: 1)
       @user = CgtraderLevels::User.create!
 
       expect {
@@ -27,9 +27,9 @@ RSpec.describe CgtraderLevels::User do
     end
 
     it "level ups from 'First level' to 'Second level' with noise" do
-      @level_1 = CgtraderLevels::Level.create!(experience: 0, title: 'First level')
-      @level_2 = CgtraderLevels::Level.create!(experience: 10, title: 'Second level')
-      @level_3 = CgtraderLevels::Level.create!(experience: 13, title: 'Third level')
+      @level_1 = CgtraderLevels::Level.create!(experience: 0, title: 'First level', number: 0)
+      @level_2 = CgtraderLevels::Level.create!(experience: 10, title: 'Second level', number: 1)
+      @level_3 = CgtraderLevels::Level.create!(experience: 13, title: 'Third level', number: 2)
       @user = CgtraderLevels::User.create!
 
       expect {
@@ -47,6 +47,25 @@ RSpec.describe CgtraderLevels::User do
       }.to change { @user.reload.coins }.from(1).to(8)
     end
 
-    it 'reduces tax rate by 1'
+    it 'reduces tax rate by 1 per level' do
+      CgtraderLevels::Level.create!(experience: 0, title: 'First level', number: 0)
+      CgtraderLevels::Level.create!(experience: 10, title: 'Second level', number: 1)
+      @user = CgtraderLevels::User.create!
+
+      expect {
+        @user.update_attribute(:reputation, 12)
+      }.to change { @user.reload.tax }.from(30).to(29)
+    end
+
+    it 'reduces tax rate by 2 from 1' do
+      CgtraderLevels::Level.create!(experience: 0, title: 'First level', number: 0)
+      CgtraderLevels::Level.create!(experience: 10, title: 'Second level', number: 1)
+      CgtraderLevels::Level.create!(experience: 13, title: 'Second level', number: 2)
+      @user = CgtraderLevels::User.create!(tax: 1)
+
+      expect {
+        @user.update_attribute(:reputation, 14)
+      }.to change { @user.reload.tax }.from(1).to(0)
+    end
   end
 end

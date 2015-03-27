@@ -17,4 +17,5 @@ end
 ActiveRecord::Base.connection.create_table :levels do |table|
   table.string :title
   table.integer :experience
+  table.integer :number
 end
