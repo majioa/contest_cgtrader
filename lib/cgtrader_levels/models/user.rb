@@ -1,5 +1,5 @@
 class CgtraderLevels::User < ActiveRecord::Base
-  attr_reader :level
+  belongs_to :level, class_name: 'CgtraderLevels::Level'
 
   after_initialize :set_new_level
   after_update :set_new_level
@@ -12,9 +12,6 @@ class CgtraderLevels::User < ActiveRecord::Base
     CgtraderLevels::Level.where(levels[:experience].lteq(reputation))
                          .order(levels[:experience].desc).first
 
-    if matching_level
-      self.level_id = matching_level.id
-      @level = matching_level
-    end
+    self.level = matching_level if matching_level
   end
 end
